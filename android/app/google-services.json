@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "894994812233",
+    "project_id": "act5-login-app",
+    "storage_bucket": "act5-login-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:894994812233:android:66aaa0d9963d0221ee5e98",
+        "android_client_info": {
+          "package_name": "com.example.act5"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRkYsQP2fITnwODIa539NAozWS-Q2HMLQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
