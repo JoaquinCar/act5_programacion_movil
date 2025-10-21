@@ -7,6 +7,7 @@ Desarrollo de una aplicación Flutter con una pantalla de inicio de sesión func
 - Flutter SDK instalado
 - Editor de código (VS Code o Android Studio)
 - Emulador o dispositivo físico para pruebas
+- 2
 - Cuenta de Firebase (gratuita)
 - Node.js instalado (para Firebase CLI)
 
@@ -1680,4 +1681,194 @@ Aplicación de inicio de sesión con Flutter y Firebase Authentication.
 
 ---
 
-**¡Éxito con tu proyecto! Ahora tienes una aplicación completamente funcional con autenticación real mediante Firebase.**
+## Paso Extra: Integración con Cloud Firestore (MVP - 3 Colecciones)
+
+### ¿Qué es Cloud Firestore?
+Firestore es una base de datos NoSQL en la nube de Firebase que permite almacenar y sincronizar datos en tiempo real.
+
+### Colecciones Implementadas
+
+Para el MVP (Producto Mínimo Viable), se han implementado 3 colecciones principales:
+
+#### 1. **Colección `usuarios`**
+Almacena la información personal de cada usuario.
+
+**Campos:**
+- `email`: Correo electrónico del usuario
+- `nombre`: Nombre completo
+- `edad`: Edad del usuario
+- `lugar_nacimiento`: Ciudad y país de nacimiento
+- `padecimientos`: Condiciones médicas actuales
+- `telefono`: Número de teléfono (opcional)
+- `fecha_registro`: Fecha de creación del perfil
+
+**Uso:** Se guarda automáticamente cuando el usuario completa su perfil en "Configuración → Perfil".
+
+#### 2. **Colección `citas`**
+Guarda todas las citas programadas.
+
+**Campos:**
+- `paciente_id`: UID del paciente
+- `medico_id`: ID del médico
+- `medico_nombre`: Nombre del médico
+- `especialidad`: Especialidad médica
+- `fecha_hora`: Fecha y hora de la cita
+- `motivo`: Razón de la consulta
+- `estado`: Estado de la cita (pendiente, confirmada, cancelada, completada)
+- `fecha_creacion`: Fecha en que se agendó
+
+**Uso:** Se crea cuando un usuario agenda una cita con un especialista.
+
+#### 3. **Colección `disponibilidad_medicos`**
+Almacena los horarios disponibles de cada médico.
+
+**Campos:**
+- `medico_id`: ID único del médico
+- `medico_nombre`: Nombre del médico
+- `especialidad`: Especialidad
+- `fecha`: Fecha del horario disponible
+- `hora_inicio`: Hora de inicio (ej: "09:00")
+- `hora_fin`: Hora de fin (ej: "10:00")
+- `esta_disponible`: `true` si está libre, `false` si está ocupado
+
+**Uso:** Permite validar qué horarios están disponibles antes de agendar una cita.
+
+### Dependencia Agregada
+
+```yaml
+dependencies:
+  cloud_firestore: ^5.5.0
+```
+
+### Servicios Creados
+
+#### **FirestoreService** (`lib/services/firestore_service.dart`)
+Servicio principal con todas las operaciones CRUD:
+
+**Usuarios:**
+- `createOrUpdateUser(UserModel user)` - Crear/actualizar usuario
+- `getUser(String uid)` - Obtener usuario por UID
+- `getUserStream(String uid)` - Stream en tiempo real
+
+**Citas:**
+- `createAppointment(AppointmentModel appointment)` - Crear cita
+- `getPatientAppointments(String pacienteId)` - Obtener citas del paciente
+- `getDoctorAppointments(String medicoId)` - Obtener citas del médico
+- `updateAppointmentStatus(String citaId, String nuevoEstado)` - Cambiar estado
+- `cancelAppointment(String citaId)` - Cancelar cita
+- `getPatientAppointmentsStream(String pacienteId)` - Stream en tiempo real
+
+**Disponibilidad:**
+- `createDoctorAvailability(DoctorAvailabilityModel availability)` - Crear horario
+- `getDoctorAvailability({required String medicoId, required DateTime fecha})` - Obtener horarios de un médico
+- `getAvailableSlots({DateTime? fecha, String? especialidad})` - Obtener horarios disponibles
+- `markSlotAsUnavailable(String availabilityId)` - Marcar como ocupado
+- `markSlotAsAvailable(String availabilityId)` - Marcar como disponible
+
+**Operaciones Combinadas:**
+- `bookAppointment({required AppointmentModel appointment, required String availabilityId})` - Agendar cita completa
+- `cancelAppointmentAndFreeSlot({required String citaId, required String availabilityId})` - Cancelar y liberar horario
+
+### Modelos de Datos
+
+Ubicados en `lib/models/`:
+
+- **`user_model.dart`** - Modelo de usuario
+- **`appointment_model.dart`** - Modelo de cita
+- **`doctor_availability_model.dart`** - Modelo de disponibilidad
+
+Cada modelo tiene:
+- Constructor con campos requeridos
+- `fromFirestore()` - Convierte de Firestore a Dart
+- `toFirestore()` - Convierte de Dart a Firestore
+
+### Script de Inicialización de Datos
+
+**FirestoreInitData** (`lib/services/firestore_init_data.dart`)
+
+Permite poblar la base de datos con datos de ejemplo:
+
+```dart
+FirestoreInitData initData = FirestoreInitData();
+
+// Inicializar solo si no hay datos
+await initData.initializeIfNeeded();
+```
+
+Esto crea:
+- 7 médicos con diferentes especialidades
+- 7 horarios diarios (9:00 AM - 6:00 PM)
+- 7 días de disponibilidad
+- **Total: 343 slots de citas**
+
+### Integración Actual
+
+✅ **EditProfileScreen** ya está integrado con Firestore:
+- Carga datos existentes del usuario al abrir
+- Guarda/actualiza datos en Firestore al presionar "Guardar Cambios"
+- Muestra indicador de carga durante el proceso
+- Maneja errores con mensajes informativos
+
+### Reglas de Seguridad Recomendadas
+
+En la consola de Firebase → Firestore → Reglas:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Usuarios solo pueden leer/escribir su propio documento
+    match /usuarios/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Citas - solo el paciente puede ver/modificar sus citas
+    match /citas/{citaId} {
+      allow read: if request.auth != null &&
+                     resource.data.paciente_id == request.auth.uid;
+      allow create: if request.auth != null &&
+                       request.resource.data.paciente_id == request.auth.uid;
+      allow update, delete: if request.auth != null &&
+                               resource.data.paciente_id == request.auth.uid;
+    }
+
+    // Disponibilidad - todos pueden leer, solo admins escribir
+    match /disponibilidad_medicos/{slotId} {
+      allow read: if request.auth != null;
+      allow update: if request.auth != null;
+    }
+  }
+}
+```
+
+### Configurar Firestore en Firebase Console
+
+1. Ve a la consola de Firebase: https://console.firebase.google.com
+2. Selecciona tu proyecto (`act5-login-app`)
+3. En el menú lateral, haz clic en "Firestore Database"
+4. Haz clic en "Crear base de datos"
+5. Selecciona "Iniciar en modo de prueba" (para desarrollo)
+6. Elige la ubicación más cercana (ej: `us-central1`)
+7. Haz clic en "Habilitar"
+
+### Probar la Integración
+
+1. Ejecuta la app: `flutter run`
+2. Inicia sesión o crea una cuenta
+3. Ve a **Configuración → Perfil**
+4. Completa los campos:
+   - Nombre
+   - Edad
+   - Lugar de nacimiento
+   - Padecimientos
+5. Presiona "Guardar Cambios"
+6. Verifica en Firebase Console → Firestore que se creó el documento en la colección `usuarios`
+
+### Documentación Completa
+
+Para más detalles sobre el uso de las colecciones, consulta el archivo **`FIRESTORE_README.md`** en la raíz del proyecto.
+
+---
+
+**¡Éxito con tu proyecto! Ahora tienes una aplicación completamente funcional con autenticación Firebase y base de datos Firestore.**
