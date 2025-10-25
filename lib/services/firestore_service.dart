@@ -67,12 +67,16 @@ class FirestoreService {
       QuerySnapshot querySnapshot = await _firestore
           .collection('citas')
           .where('paciente_id', isEqualTo: pacienteId)
-          .orderBy('fecha_hora', descending: true)
           .get();
 
-      return querySnapshot.docs
+      List<AppointmentModel> appointments = querySnapshot.docs
           .map((doc) => AppointmentModel.fromFirestore(doc))
           .toList();
+
+      // Ordenar en memoria para evitar índice compuesto
+      appointments.sort((a, b) => b.fechaHora.compareTo(a.fechaHora));
+
+      return appointments;
     } catch (e) {
       throw Exception('Error al obtener citas del paciente: $e');
     }
@@ -84,12 +88,16 @@ class FirestoreService {
       QuerySnapshot querySnapshot = await _firestore
           .collection('citas')
           .where('medico_id', isEqualTo: medicoId)
-          .orderBy('fecha_hora', descending: false)
           .get();
 
-      return querySnapshot.docs
+      List<AppointmentModel> appointments = querySnapshot.docs
           .map((doc) => AppointmentModel.fromFirestore(doc))
           .toList();
+
+      // Ordenar en memoria para evitar índice compuesto
+      appointments.sort((a, b) => a.fechaHora.compareTo(b.fechaHora));
+
+      return appointments;
     } catch (e) {
       throw Exception('Error al obtener citas del médico: $e');
     }
@@ -121,12 +129,18 @@ class FirestoreService {
     return _firestore
         .collection('citas')
         .where('paciente_id', isEqualTo: pacienteId)
-        .orderBy('fecha_hora', descending: true)
         .snapshots()
         .map(
-          (snapshot) => snapshot.docs
-              .map((doc) => AppointmentModel.fromFirestore(doc))
-              .toList(),
+          (snapshot) {
+            List<AppointmentModel> appointments = snapshot.docs
+                .map((doc) => AppointmentModel.fromFirestore(doc))
+                .toList();
+
+            // Ordenar en memoria para evitar índice compuesto
+            appointments.sort((a, b) => b.fechaHora.compareTo(a.fechaHora));
+
+            return appointments;
+          },
         );
   }
 
@@ -176,10 +190,10 @@ class FirestoreService {
     String? especialidad,
   }) async {
     try {
-      Query query = _firestore
-          .collection('disponibilidad_medicos')
-          .where('esta_disponible', isEqualTo: true);
+      // Consulta simple sin índices compuestos
+      Query query = _firestore.collection('disponibilidad_medicos');
 
+      // Si hay fecha, filtrar por rango de fecha
       if (fecha != null) {
         DateTime startOfDay = DateTime(fecha.year, fecha.month, fecha.day);
         DateTime endOfDay = DateTime(fecha.year, fecha.month, fecha.day, 23, 59, 59);
@@ -193,6 +207,9 @@ class FirestoreService {
       List<DoctorAvailabilityModel> slots = querySnapshot.docs
           .map((doc) => DoctorAvailabilityModel.fromFirestore(doc))
           .toList();
+
+      // Filtrar en memoria para evitar índices compuestos
+      slots = slots.where((slot) => slot.estaDisponible == true).toList();
 
       // Filtrar por especialidad si se proporciona
       if (especialidad != null && especialidad.isNotEmpty) {

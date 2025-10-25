@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../services/firestore_init_data.dart';
 import 'edit_profile_screen.dart';
 import 'privacy_screen.dart';
 import 'about_us_screen.dart';
@@ -76,6 +77,93 @@ class SettingsScreen extends StatelessWidget {
                   builder: (context) => const AboutUsScreen(),
                 ),
               );
+            },
+          ),
+
+          const SizedBox(height: 12),
+
+          // TEMPORAL: Inicializar datos de disponibilidad
+          _buildSettingOption(
+            context,
+            icon: Icons.cloud_download,
+            iconColor: Colors.green,
+            title: 'Inicializar Horarios',
+            subtitle: 'Cargar horarios del 25 oct al 10 nov 2025',
+            onTap: () async {
+              // Mostrar diálogo de confirmación
+              bool? confirm = await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Row(
+                      children: [
+                        Icon(Icons.cloud_download, color: Colors.green),
+                        SizedBox(width: 10),
+                        Text('Inicializar Horarios'),
+                      ],
+                    ),
+                    content: const Text(
+                      '¿Deseas cargar los horarios disponibles de los médicos? Esto creará slots de citas del 25 de octubre al 10 de noviembre de 2025.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('Cancelar'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.green,
+                        ),
+                        child: const Text('Inicializar'),
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (confirm == true && context.mounted) {
+                // Mostrar indicador de carga
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                );
+
+                try {
+                  final initData = FirestoreInitData();
+
+                  // Inicializar datos (sin verificar, permite agregar nuevos horarios)
+                  await initData.initializeDoctorAvailability();
+
+                  if (context.mounted) {
+                    Navigator.of(context).pop(); // Cerrar indicador de carga
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('✓ Horarios cargados exitosamente (25 oct - 10 nov)'),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    Navigator.of(context).pop(); // Cerrar indicador si está abierto
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error al cargar horarios: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              }
             },
           ),
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'profile_page.dart';
+import 'create_appointment_screen.dart';
+import 'appointments_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -68,8 +70,22 @@ class HomeScreen extends StatelessWidget {
                       title: 'Agendar\nuna Cita',
                       color: Colors.purple,
                       onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Función de agendar cita')),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const CreateAppointmentScreen()),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 15),
+                    _buildQuickActionButton(
+                      context,
+                      icon: Icons.event_note,
+                      title: 'Mis\nCitas',
+                      color: Colors.indigo,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AppointmentsScreen()),
                         );
                       },
                     ),
