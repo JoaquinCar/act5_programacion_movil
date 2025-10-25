@@ -31,25 +31,49 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text('Mis Citas'),
-        backgroundColor: Colors.purple,
+        title: const Text(
+          'Mis Citas',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.purple.shade600, Colors.blue.shade600],
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.filter_list),
-            onSelected: (value) {
-              setState(() {
-                _selectedFilter = value;
-              });
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 'todas', child: Text('Todas')),
-              const PopupMenuItem(value: 'pendiente', child: Text('Pendientes')),
-              const PopupMenuItem(value: 'confirmada', child: Text('Confirmadas')),
-              const PopupMenuItem(value: 'completada', child: Text('Completadas')),
-              const PopupMenuItem(value: 'cancelada', child: Text('Canceladas')),
-            ],
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            child: PopupMenuButton<String>(
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.filter_list, size: 24),
+              ),
+              onSelected: (value) {
+                setState(() {
+                  _selectedFilter = value;
+                });
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              itemBuilder: (context) => [
+                const PopupMenuItem(value: 'todas', child: Text('📋 Todas')),
+                const PopupMenuItem(value: 'pendiente', child: Text('⏳ Pendientes')),
+                const PopupMenuItem(value: 'confirmada', child: Text('✅ Confirmadas')),
+                const PopupMenuItem(value: 'completada', child: Text('✔️ Completadas')),
+                const PopupMenuItem(value: 'cancelada', child: Text('❌ Canceladas')),
+              ],
+            ),
           ),
         ],
       ),
@@ -132,18 +156,41 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const CreateAppointmentScreen(),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          gradient: LinearGradient(
+            colors: [Colors.purple.shade600, Colors.blue.shade600],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.purple.withOpacity(0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
-          );
-        },
-        backgroundColor: Colors.purple,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('Nueva Cita', style: TextStyle(color: Colors.white)),
+          ],
+        ),
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const CreateAppointmentScreen(),
+              ),
+            );
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          icon: const Icon(Icons.add, color: Colors.white, size: 24),
+          label: const Text(
+            'Nueva Cita',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -152,85 +199,118 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     Color statusColor = _getStatusColor(appointment.estado);
     IconData statusIcon = _getStatusIcon(appointment.estado);
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: statusColor.withOpacity(0.1),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+            spreadRadius: 2,
+          ),
+        ],
+        border: Border.all(
+          color: statusColor.withOpacity(0.2),
+          width: 1.5,
+        ),
       ),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EditAppointmentScreen(
-                appointment: appointment,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditAppointmentScreen(
+                  appointment: appointment,
+                ),
               ),
-            ),
-          );
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header: Médico y Estado
-              Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: statusColor.withOpacity(0.2),
-                    child: Icon(Icons.person, color: statusColor),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          appointment.medicoNombre,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+            );
+          },
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header: Médico y Estado
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [statusColor.withOpacity(0.2), statusColor.withOpacity(0.1)],
                         ),
-                        Text(
-                          appointment.especialidad,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                          ),
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color: statusColor.withOpacity(0.3),
+                          width: 1.5,
                         ),
-                      ],
+                      ),
+                      child: Icon(Icons.person, color: statusColor, size: 28),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(statusIcon, size: 16, color: statusColor),
-                        const SizedBox(width: 4),
-                        Text(
-                          _getStatusText(appointment.estado),
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: statusColor,
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            appointment.medicoNombre,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          Text(
+                            appointment.especialidad,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [statusColor.withOpacity(0.15), statusColor.withOpacity(0.1)],
+                        ),
+                        borderRadius: BorderRadius.circular(25),
+                        border: Border.all(
+                          color: statusColor.withOpacity(0.3),
+                          width: 1.2,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(statusIcon, size: 16, color: statusColor),
+                          const SizedBox(width: 6),
+                          Text(
+                            _getStatusText(appointment.estado),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: statusColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               const SizedBox(height: 16),
 
               // Fecha y Hora
@@ -317,6 +397,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 

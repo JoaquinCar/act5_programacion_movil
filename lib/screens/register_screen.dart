@@ -96,116 +96,188 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Crear Cuenta'),
-        backgroundColor: Colors.purple,
-        foregroundColor: Colors.white,
-      ),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Logo
-                  Image.asset(
-                    'assets/images/login.png',
-                    height: 150,
-                    width: 150,
-                    errorBuilder: (context, error, stackTrace) {
-                      // Si no encuentra la imagen, muestra el ícono por defecto
-                      return Icon(
-                        Icons.person_add,
-                        size: 100,
-                        color: Colors.purple.shade400,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 30),
-
-                  const Text(
-                    'Registro',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.purple,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.purple.shade50,
+              Colors.blue.shade50,
+              Colors.white,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 450),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.purple.withOpacity(0.1),
+                      blurRadius: 30,
+                      offset: const Offset(0, 10),
+                      spreadRadius: 5,
                     ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  Text(
-                    'Crea tu cuenta para continuar',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-
-                  CustomTextField(
-                    controller: _emailController,
-                    labelText: 'Correo Electrónico',
-                    hintText: 'ejemplo@correo.com',
-                    keyboardType: TextInputType.emailAddress,
-                    prefixIcon: Icons.email,
-                    validator: _validateEmail,
-                  ),
-                  const SizedBox(height: 20),
-
-                  CustomTextField(
-                    controller: _passwordController,
-                    labelText: 'Contraseña',
-                    hintText: '********',
-                    obscureText: true,
-                    prefixIcon: Icons.lock,
-                    validator: _validatePassword,
-                  ),
-                  const SizedBox(height: 20),
-
-                  CustomTextField(
-                    controller: _confirmPasswordController,
-                    labelText: 'Confirmar Contraseña',
-                    hintText: '********',
-                    obscureText: true,
-                    prefixIcon: Icons.lock_outline,
-                    validator: _validateConfirmPassword,
-                  ),
-                  const SizedBox(height: 30),
-
-                  _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : CustomButton(
-                    text: 'Crear Cuenta',
-                    onPressed: _handleRegister,
-                  ),
-                  const SizedBox(height: 20),
-
-                  Row(
+                  ],
+                ),
+                padding: const EdgeInsets.all(32.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        '¿Ya tienes cuenta? ',
-                        style: TextStyle(color: Colors.grey.shade600),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          'Inicia Sesión',
-                          style: TextStyle(
-                            color: Colors.purple,
-                            fontWeight: FontWeight.bold,
+                      // Botón de retroceso
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.purple.shade400, Colors.blue.shade400],
+                            ),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.purple.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.arrow_back, color: Colors.white),
+                            onPressed: () => Navigator.pop(context),
                           ),
                         ),
                       ),
+                      const SizedBox(height: 20),
+                      // Logo con gradiente circular
+                      Container(
+                        height: 100,
+                        width: 100,
+                        margin: const EdgeInsets.only(bottom: 20),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.purple.shade400,
+                              Colors.blue.shade400,
+                            ],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.purple.withOpacity(0.3),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.person_add_rounded,
+                          size: 50,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // Título con gradiente
+                      ShaderMask(
+                        shaderCallback: (bounds) => LinearGradient(
+                          colors: [Colors.purple.shade600, Colors.blue.shade600],
+                        ).createShader(bounds),
+                        child: const Text(
+                          'Crear Cuenta',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Subtítulo
+                      Text(
+                        'Regístrate para comenzar',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey.shade600,
+                          height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: 35),
+
+                      // Campos del formulario
+                      CustomTextField(
+                        controller: _emailController,
+                        labelText: 'Correo Electrónico',
+                        hintText: 'ejemplo@correo.com',
+                        keyboardType: TextInputType.emailAddress,
+                        prefixIcon: Icons.email,
+                        validator: _validateEmail,
+                      ),
+                      const SizedBox(height: 20),
+
+                      CustomTextField(
+                        controller: _passwordController,
+                        labelText: 'Contraseña',
+                        hintText: '********',
+                        obscureText: true,
+                        prefixIcon: Icons.lock,
+                        validator: _validatePassword,
+                      ),
+                      const SizedBox(height: 20),
+
+                      CustomTextField(
+                        controller: _confirmPasswordController,
+                        labelText: 'Confirmar Contraseña',
+                        hintText: '********',
+                        obscureText: true,
+                        prefixIcon: Icons.lock_outline,
+                        validator: _validateConfirmPassword,
+                      ),
+                      const SizedBox(height: 30),
+
+                      _isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : CustomButton(
+                        text: 'Crear Cuenta',
+                        onPressed: _handleRegister,
+                      ),
+                      const SizedBox(height: 20),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '¿Ya tienes cuenta? ',
+                            style: TextStyle(color: Colors.grey.shade600),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text(
+                              'Inicia Sesión',
+                              style: TextStyle(
+                                color: Colors.purple,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
           ),

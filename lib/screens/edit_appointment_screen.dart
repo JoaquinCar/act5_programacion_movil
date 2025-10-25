@@ -73,8 +73,19 @@ class _EditAppointmentScreenState extends State<EditAppointmentScreen> {
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
-          title: const Text('Editar Cita'),
-          backgroundColor: Colors.purple,
+          title: const Text(
+            'Editar Cita',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.purple.shade600, Colors.blue.shade600],
+              ),
+            ),
+          ),
           foregroundColor: Colors.white,
           elevation: 0,
           actions: [

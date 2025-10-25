@@ -7,20 +7,37 @@ class MessagesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text('Mensajes'),
-        backgroundColor: Colors.purple,
-        foregroundColor: Colors.white,
-        elevation: 1,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {},
+        title: const Text(
+          'Mensajes',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.purple.shade600, Colors.blue.shade600],
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {},
+        ),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 4),
+            child: IconButton(
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.search, size: 22),
+              ),
+              onPressed: () {},
+            ),
           ),
         ],
       ),
@@ -100,14 +117,30 @@ class MessagesScreen extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Función de nuevo mensaje')),
-          );
-        },
-        backgroundColor: Colors.purple,
-        child: const Icon(Icons.message, color: Colors.white),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            colors: [Colors.purple.shade600, Colors.blue.shade600],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.purple.withOpacity(0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: FloatingActionButton(
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Función de nuevo mensaje')),
+            );
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: const Icon(Icons.edit_outlined, color: Colors.white, size: 26),
+        ),
       ),
     );
   }
@@ -121,29 +154,61 @@ class MessagesScreen extends StatelessWidget {
     required IconData icon,
     required int unreadCount,
   }) {
-    return InkWell(
-      onTap: () {
-        _openChatScreen(context, name, avatarColor, icon);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: Colors.grey.shade200,
-              width: 1,
-            ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: avatarColor.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+            spreadRadius: 1,
           ),
-        ),
-        child: Row(
-          children: [
-            // Avatar
-            CircleAvatar(
-              radius: 28,
-              backgroundColor: avatarColor.withOpacity(0.2),
-              child: Icon(icon, color: avatarColor, size: 28),
-            ),
-            const SizedBox(width: 12),
+        ],
+        border: unreadCount > 0
+            ? Border.all(
+                color: avatarColor.withOpacity(0.3),
+                width: 1.5,
+              )
+            : null,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            _openChatScreen(context, name, avatarColor, icon);
+          },
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
+              children: [
+                // Avatar con degradado
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        avatarColor.withOpacity(0.8),
+                        avatarColor.withOpacity(0.6),
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: avatarColor.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 24),
+                ),
+                const SizedBox(width: 14),
             // Contenido del mensaje
             Expanded(
               child: Column(
@@ -200,16 +265,25 @@ class MessagesScreen extends StatelessWidget {
                         Container(
                           margin: const EdgeInsets.only(left: 8),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
+                              horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
-                            color: Colors.purple,
-                            borderRadius: BorderRadius.circular(12),
+                            gradient: LinearGradient(
+                              colors: [avatarColor, avatarColor.withOpacity(0.7)],
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: avatarColor.withOpacity(0.3),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: Text(
                             '$unreadCount',
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 12,
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -220,6 +294,8 @@ class MessagesScreen extends StatelessWidget {
               ),
             ),
           ],
+        ),
+          ),
         ),
       ),
     );

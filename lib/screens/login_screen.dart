@@ -137,54 +137,103 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Logo
-                  Image.asset(
-                    'assets/images/login.png',
-                    height: 150,
-                    width: 150,
-                    errorBuilder: (context, error, stackTrace) {
-                      // Si no encuentra la imagen, muestra el ícono por defecto
-                      return Icon(
-                        Icons.local_hospital,
-                        size: 100,
-                        color: Colors.purple.shade400,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 30),
-
-                  // Título
-                  const Text(
-                    'Bienvenido',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.purple,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.purple.shade50,
+              Colors.blue.shade50,
+              Colors.white,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 450),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.purple.withOpacity(0.1),
+                      blurRadius: 30,
+                      offset: const Offset(0, 10),
+                      spreadRadius: 5,
                     ),
-                  ),
-                  const SizedBox(height: 10),
+                  ],
+                ),
+                padding: const EdgeInsets.all(32.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Logo con gradiente circular
+                      Container(
+                        height: 120,
+                        width: 120,
+                        margin: const EdgeInsets.only(bottom: 20),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.purple.shade400,
+                              Colors.blue.shade400,
+                            ],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.purple.withOpacity(0.3),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.local_hospital_rounded,
+                          size: 60,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
 
-                  // Subtítulo
-                  Text(
-                    'Inicia sesión para continuar',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
+                      // Título con gradiente
+                      ShaderMask(
+                        shaderCallback: (bounds) => LinearGradient(
+                          colors: [Colors.purple.shade600, Colors.blue.shade600],
+                        ).createShader(bounds),
+                        child: const Text(
+                          'Bienvenido',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Subtítulo
+                      Text(
+                        'Inicia sesión para gestionar tus citas médicas',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey.shade600,
+                          height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
 
                   // 1. Campo de correo electrónico
                   CustomTextField(
@@ -249,13 +298,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // 5. Botón de "Crear una cuenta nueva"
-                  CustomButton(
-                    text: 'Crear Cuenta Nueva',
-                    onPressed: _isLoading ? () {} : _handleCreateAccount,
-                    isOutlined: true,
+                      // 5. Botón de "Crear una cuenta nueva"
+                      CustomButton(
+                        text: 'Crear Cuenta Nueva',
+                        onPressed: _isLoading ? () {} : _handleCreateAccount,
+                        isOutlined: true,
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
