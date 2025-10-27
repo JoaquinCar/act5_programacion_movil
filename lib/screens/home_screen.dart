@@ -237,7 +237,7 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -326,7 +326,6 @@ class HomeScreen extends StatelessWidget {
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -338,42 +337,52 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, size: 35, color: color),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _showSpecialistInfoDialog(name, specialty, color, icon),
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
               children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, size: 35, color: color),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        specialty,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  specialty,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
+                Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey[400]),
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey[400]),
-        ],
+        ),
       ),
     );
   }
@@ -509,6 +518,195 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  // Diálogo de información del especialista
+  void _showSpecialistInfoDialog(String name, String specialty, Color color, IconData icon) {
+    // Información personalizada para cada especialista
+    Map<String, Map<String, dynamic>> specialistInfo = {
+      'Dr. Carlos Ramírez': {
+        'experiencia': '15 años de experiencia',
+        'educacion': 'Universidad Nacional de Colombia',
+        'horario': 'Lunes a Viernes: 8:00 AM - 4:00 PM',
+        'servicios': ['Electrocardiogramas', 'Ecocardiogramas', 'Pruebas de esfuerzo', 'Consulta preventiva'],
+      },
+      'Dra. Ana Martínez': {
+        'experiencia': '12 años de experiencia',
+        'educacion': 'Universidad de los Andes',
+        'horario': 'Lunes a Sábado: 9:00 AM - 5:00 PM',
+        'servicios': ['Tratamiento de acné', 'Cirugía dermatológica', 'Tratamientos láser', 'Consulta de lunares'],
+      },
+      'Dr. Luis Hernández': {
+        'experiencia': '10 años de experiencia',
+        'educacion': 'Universidad Javeriana',
+        'horario': 'Lunes a Viernes: 7:00 AM - 3:00 PM',
+        'servicios': ['Control de niño sano', 'Vacunación', 'Consulta pediátrica', 'Desarrollo infantil'],
+      },
+      'Dra. María López': {
+        'experiencia': '18 años de experiencia',
+        'educacion': 'Universidad del Rosario',
+        'horario': 'Martes a Sábado: 10:00 AM - 6:00 PM',
+        'servicios': ['Examen visual completo', 'Cirugía de cataratas', 'Tratamiento de glaucoma', 'Adaptación de lentes'],
+      },
+      'Dr. Jorge Sánchez': {
+        'experiencia': '20 años de experiencia',
+        'educacion': 'Universidad Nacional de Colombia',
+        'horario': 'Lunes a Jueves: 9:00 AM - 5:00 PM',
+        'servicios': ['Electroencefalograma', 'Tratamiento de migraña', 'Evaluación neurológica', 'Trastornos del sueño'],
+      },
+    };
+
+    final info = specialistInfo[name] ?? {
+      'experiencia': 'Información no disponible',
+      'educacion': 'Información no disponible',
+      'horario': 'Información no disponible',
+      'servicios': ['Consulta general'],
+    };
+
+    showDialog(
+      context: context as BuildContext,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [color, color.withOpacity(0.7)],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: Colors.white, size: 28),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      specialty,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildInfoItem(Icons.school, 'Educación', info['educacion'], color),
+                const SizedBox(height: 12),
+                _buildInfoItem(Icons.work, 'Experiencia', info['experiencia'], color),
+                const SizedBox(height: 12),
+                _buildInfoItem(Icons.access_time, 'Horario', info['horario'], color),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Icon(Icons.medical_services, color: color, size: 20),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Servicios',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                ...List.generate(
+                  (info['servicios'] as List).length,
+                  (index) => Padding(
+                    padding: const EdgeInsets.only(left: 28, bottom: 6),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            info['servicios'][index],
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Cerrar',
+                style: TextStyle(color: color, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoItem(IconData icon, String label, String value, Color color) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[700],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

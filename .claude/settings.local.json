@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Mejoras UX pantalla de inicio y limpieza de código\n\n- Agregado popup informativo para cada especialista con detalles completos\n  (educación, experiencia, horario, servicios)\n- Corregido padding inferior para evitar que la barra de navegación tape\n  los doctores populares\n- Eliminado script de inicialización de horarios (firestore_init_data.dart)\n- Removida opción de \"Inicializar Horarios\" del menú de configuración\nEOF\n)\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
